@@ -3,7 +3,7 @@ import { Color, Day, IClassSchedule } from "./classSchedule.interface";
 
 const ClassScheduleSchema = new Schema<IClassSchedule>(
   {
-    user: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    user: { type: Schema.Types.ObjectId, ref: "User" },
     subject: { type: String, required: true },
     instructor: { type: String, required: true },
     day: { type: String, enum: Object.values(Day), required: true },

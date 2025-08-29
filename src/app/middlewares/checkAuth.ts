@@ -4,8 +4,7 @@ import config from "../config";
 import { JwtPayload } from "jsonwebtoken";
 import AppError from "../errorHelpers/AppError";
 
-export const checkAuth =
-  (...authRoles: string[]) =>
+export const checkAuth = () =>
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const accessToken = req.cookies?.accessToken;
@@ -16,9 +15,6 @@ export const checkAuth =
         accessToken,
         config.jwt.secret
       ) as JwtPayload;
-      if (!authRoles.includes(verifiedToken.role)) {
-        throw new AppError(403, "You are not permitted to view this route!!!");
-      }
       req.user = verifiedToken;
       next();
     } catch (error) {

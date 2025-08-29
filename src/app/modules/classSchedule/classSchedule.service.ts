@@ -10,11 +10,12 @@ const createClassSchedule = async (
   try {
     const scheduleData = {
       ...payload,
-      user: new Types.ObjectId(authUser._id),
+      user: authUser._id,
     };
+    console.log(payload, authUser)
     return await ClassSchedule.create(scheduleData);
   } catch (error) {
-    throw new Error("Failed to create class schedule");
+    throw error;
   }
 };
 

@@ -3,6 +3,7 @@ import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
 import { setCookie } from "../../utils/setCookie";
 import { AuthServices } from "./auth.services";
+import { HttpStatus } from "../../utils/httpStatus";
 
 const register = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -21,7 +22,7 @@ const login = catchAsync(
     const user = await AuthServices.login(req.body);
     setCookie(res, user);
     sendResponse(res, {
-      statusCode: 201,
+      statusCode: HttpStatus.OK,
       success: true,
       message: "User Login successfully",
       data: user,

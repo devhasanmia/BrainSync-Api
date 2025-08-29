@@ -11,7 +11,6 @@ export const createUserToken = (user: IUser & { _id: string }) => {
         _id: user._id,
         email: user.email,
         phone: user.phone,
-        role: user.role,
     };
     const accessToken = generateToken(
         jwtPayload as JwtPayload,

@@ -21,7 +21,7 @@ export enum Color {
 }
 
 export interface IClassSchedule {
-  user: Types.ObjectId;
+  user?: Types.ObjectId;
   subject: string;
   instructor: string;
   day: Day;

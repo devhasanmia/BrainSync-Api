@@ -1,6 +1,8 @@
 import express from "express";
 import { checkAuth } from "../../middlewares/checkAuth";
 import { ClassScheduleController } from "./classSchedule.controller";
+import { validateRequest } from "../../middlewares/validateRequest";
+import { classScheduleUpdateValidationSchema, classScheduleValidationSchema } from "./classSchedule.validattion";
 
 const router = express.Router();
 
@@ -8,6 +10,7 @@ const router = express.Router();
 router.post(
   "/",
   checkAuth(),
+  validateRequest(classScheduleValidationSchema),
   ClassScheduleController.createClassSchedule
 );
 
@@ -17,21 +20,22 @@ router.get("/", checkAuth(), ClassScheduleController.getClassSchedules);
 // Read one
 router.get(
   "/:id",
-  checkAuth("user"),
+  checkAuth(),
   ClassScheduleController.getClassScheduleById
 );
 
 // Update
 router.patch(
   "/:id",
-  checkAuth("user"),
+  checkAuth(),
+  validateRequest(classScheduleUpdateValidationSchema),
   ClassScheduleController.updateClassSchedule
 );
 
 // Delete
 router.delete(
   "/:id",
-  checkAuth("user"),
+  checkAuth(),
   ClassScheduleController.deleteClassSchedule
 );
 
