@@ -7,13 +7,8 @@ import { createUserToken, refreshAccessToken } from "../../utils/userToken";
 import { HttpStatus } from "../../utils/httpStatus";
 
 const register = async (payload: IUser) => {
-    const session = await mongoose.startSession();
-    session.startTransaction();
     try {
-        if (payload.role === 'admin') {
-            throw new AppError(403, "Cannot register with admin role");
-        }
-        const isExist = await User.findOne({ phone: payload.phone }).session(session);
+        const isExist = await User.findOne({ email: payload.email });
         if (isExist) {
             throw new AppError(409, "User already exists with this phone number");
         }
@@ -21,26 +16,18 @@ const register = async (payload: IUser) => {
         const createdUser = await User.create([{
             ...payload,
             password: hashedPassword,
-            role: payload.role || "user",
-            isBlocked: false,
-            approvalStatus: payload.role === "agent" ? 'pending' : 'approved',
-        }], { session });
-    
-        await session.commitTransaction();
-        session.endSession();
+        }]);
         const { password, ...userWithoutPassword } = createdUser[0].toObject();
         return userWithoutPassword;
     } catch (error) {
-        await session.abortTransaction();
-        session.endSession();
         throw error;
     }
 };
 
 
 const login = async (payload: Partial<IUser>) => {
-    const { phone, password } = payload;
-    const user = await User.findOne({ phone });
+    const { email, password } = payload;
+    const user = await User.findOne({ email });
     if (!user) {
         throw new AppError(
             HttpStatus.NOT_FOUND,
@@ -51,13 +38,6 @@ const login = async (payload: Partial<IUser>) => {
     if (!isPasswordValid) {
         throw new AppError(HttpStatus.UNAUTHORIZED, "Incorrect password or phone number");
     }
-    if (user.isBlocked) {
-        throw new AppError(HttpStatus.FORBIDDEN, "Your account has been blocked, please contact support");
-    }
-    if (user.role === 'agent' && user.approvalStatus !== 'approved') {
-        throw new AppError(HttpStatus.FORBIDDEN, `Your agent account is ${user.approvalStatus}. Please contact support for more information.`);
-    }
- 
     const userToken = createUserToken(user as any);
     return {
         accessToken: userToken.accessToken,
