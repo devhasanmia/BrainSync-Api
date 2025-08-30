@@ -2,6 +2,7 @@ import { Router } from "express"
 import { AuthRoutes } from "../modules/auth/auth.route"
 import { UserRoutes } from "../modules/user/user.route"
 import { ClassScheduleRoutes } from "../modules/classSchedule/classSchedule.route"
+import { BudgetTrackerRoutes } from "../modules/budgetTracker/budgetTracker.route"
 
 export const router = Router()
 
@@ -17,6 +18,10 @@ const apiRoutes = [
     {
         path: "/class-schedule",
         route: ClassScheduleRoutes
+    },
+    {
+        path: "/budget-tracker",
+        route: BudgetTrackerRoutes
     }
 ]
 
