@@ -2,7 +2,10 @@ import express from "express";
 import { checkAuth } from "../../middlewares/checkAuth";
 import { ClassScheduleController } from "./classSchedule.controller";
 import { validateRequest } from "../../middlewares/validateRequest";
-import { classScheduleUpdateValidationSchema, classScheduleValidationSchema } from "./classSchedule.validattion";
+import {
+  classScheduleUpdateValidationSchema,
+  classScheduleValidationSchema,
+} from "./classSchedule.validattion";
 
 const router = express.Router();
 
@@ -18,11 +21,7 @@ router.post(
 router.get("/", checkAuth(), ClassScheduleController.getClassSchedules);
 
 // Read one
-router.get(
-  "/:id",
-  checkAuth(),
-  ClassScheduleController.getClassScheduleById
-);
+router.get("/:id", checkAuth(), ClassScheduleController.getClassScheduleById);
 
 // Update
 router.patch(
@@ -33,10 +32,6 @@ router.patch(
 );
 
 // Delete
-router.delete(
-  "/:id",
-  checkAuth(),
-  ClassScheduleController.deleteClassSchedule
-);
+router.delete("/:id", checkAuth(), ClassScheduleController.deleteClassSchedule);
 
 export const ClassScheduleRoutes = router;

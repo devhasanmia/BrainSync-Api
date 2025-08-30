@@ -10,7 +10,7 @@ const ClassScheduleSchema = new Schema<IClassSchedule>(
     startTime: { type: String, required: true },
     endTime: { type: String, required: true },
     location: { type: String },
-    color: { type: String, enum: Object.values(Color), required: true },
+    color: { type: String, enum: Object.values(Color), default: "#3B82F6"},
   },
   { timestamps: true }
 );

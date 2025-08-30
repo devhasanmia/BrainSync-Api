@@ -28,5 +28,5 @@ export interface IClassSchedule {
   startTime: string;
   endTime: string;
   location?: string;
-  color: Color;
+  color?: Color;
 }

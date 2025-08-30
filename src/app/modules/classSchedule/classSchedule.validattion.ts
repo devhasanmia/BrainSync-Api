@@ -14,12 +14,10 @@ export const classScheduleValidationSchema = z.object({
     day: DayEnum,
     startTime: z
         .string({ error: "Start time is required" })
-        .min(1, { error: "Start time is required" })
-        .regex(timeFormatRegex, { error: "Start time must be in 12:30 PM format" }),
+        .min(1, { error: "Start time is required" }),
     endTime: z
         .string({ error: "End time is required" })
-        .min(1, { error: "End time is required" })
-        .regex(timeFormatRegex, { error: "End time must be in 12:30 PM format" }),
+        .min(1, { error: "End time is required" }),
     location: z.string().optional(),
     color: ColorEnum
 });

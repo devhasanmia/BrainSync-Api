@@ -12,7 +12,7 @@ const createClassSchedule = async (
       ...payload,
       user: authUser._id,
     };
-    console.log(payload, authUser)
+    console.log(payload, authUser);
     return await ClassSchedule.create(scheduleData);
   } catch (error) {
     throw error;
@@ -21,7 +21,9 @@ const createClassSchedule = async (
 
 const getClassSchedules = async (authUser: IAuthUser) => {
   try {
-    return await ClassSchedule.find({ user: authUser._id });
+    return await ClassSchedule.find({ user: authUser._id }).sort({
+      updatedAt: -1,
+    });
   } catch (error) {
     throw new Error("Failed to fetch class schedules");
   }
