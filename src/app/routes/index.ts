@@ -4,6 +4,7 @@ import { UserRoutes } from "../modules/user/user.route"
 import { ClassScheduleRoutes } from "../modules/classSchedule/classSchedule.route"
 import { BudgetTrackerRoutes } from "../modules/budgetTracker/budgetTracker.route"
 import { StudyPlannerRoutes } from "../modules/studyPlanner/studyPlanner.route"
+import { ExamQAGeneratorRoutes } from "../modules/ExamQ&AGenerator/ExamQ&AGenerator.route"
 
 export const router = Router()
 
@@ -23,6 +24,10 @@ const apiRoutes = [
     {
         path: "/budget-tracker",
         route: BudgetTrackerRoutes
+    },
+    {
+        path: "/exam-generator",
+        route: ExamQAGeneratorRoutes
     },
     {
         path: "/study-planner",
