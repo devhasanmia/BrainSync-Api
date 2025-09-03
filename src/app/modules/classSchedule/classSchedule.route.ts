@@ -19,6 +19,7 @@ router.post(
 
 // Read all
 router.get("/", checkAuth(), ClassScheduleController.getClassSchedules);
+router.get("/today", checkAuth(), ClassScheduleController.getTodayClass);
 
 // Read one
 router.get("/:id", checkAuth(), ClassScheduleController.getClassScheduleById);

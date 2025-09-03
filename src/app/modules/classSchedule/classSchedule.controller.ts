@@ -31,6 +31,19 @@ const getClassSchedules = catchAsync(async (req, res) => {
   });
 });
 
+const getTodayClass = catchAsync(async (req, res) => {
+  const authUser = req.user as IAuthUser;
+  const data = await ClassScheduleServices.getTodayClass(authUser);
+
+  sendResponse(res, {
+    statusCode: HttpStatus.OK,
+    success: true,
+    message: "Today's classes retrieved successfully",
+    data,
+  });
+});
+
+
 const getClassScheduleById = catchAsync(async (req, res) => {
   const authUser = req.user as IAuthUser;
   const { id } = req.params;
@@ -80,4 +93,5 @@ export const ClassScheduleController = {
   getClassScheduleById,
   updateClassSchedule,
   deleteClassSchedule,
+  getTodayClass
 };

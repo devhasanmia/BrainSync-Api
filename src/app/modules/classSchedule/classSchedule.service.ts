@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 import { IAuthUser } from "../../interfaces/auth.interface";
-import { IClassSchedule } from "./classSchedule.interface";
+import { Day, IClassSchedule } from "./classSchedule.interface";
 import { ClassSchedule } from "./classSchedule.model";
 
 const createClassSchedule = async (
@@ -26,6 +26,21 @@ const getClassSchedules = async (authUser: IAuthUser) => {
     });
   } catch (error) {
     throw new Error("Failed to fetch class schedules");
+  }
+};
+
+const getTodayClass = async (authUser: IAuthUser) => {
+  try {
+    const today = new Date()
+      .toLocaleDateString("en-US", { weekday: "long" }) as Day;
+    return await ClassSchedule.find({
+      user: authUser._id,
+      day: today,
+    }).sort({
+      startTime: 1,
+    });
+  } catch (error) {
+    throw new Error("Failed to fetch today's class schedules");
   }
 };
 
@@ -70,4 +85,5 @@ export const ClassScheduleServices = {
   getClassScheduleById,
   updateClassSchedule,
   deleteClassSchedule,
+  getTodayClass
 };
