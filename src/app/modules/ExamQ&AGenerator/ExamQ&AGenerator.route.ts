@@ -10,5 +10,5 @@ router.post(
 // ---- Get All Questions ----
 router.get("/", ExamQAGeneratorController.getQuestions);
 // ---- Generate Random Questions ----
-router.get("/generate", ExamQAGeneratorController.generateQuestions);
+router.post("/generate", ExamQAGeneratorController.generateQuestions);
 export const ExamQAGeneratorRoutes = router;

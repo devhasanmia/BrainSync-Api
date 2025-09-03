@@ -1,7 +1,7 @@
 import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
 import { HttpStatus } from "../../utils/httpStatus";
-import { ExamQAGeneratorServices } from "./ExamQ&AGenerator.service";
+import { ExamQAGeneratorServices, QuizSettings } from "./ExamQ&AGenerator.service";
 
 // ---- Create Question ----
 const createQuestion = catchAsync(async (req, res) => {
@@ -17,7 +17,6 @@ const createQuestion = catchAsync(async (req, res) => {
 // ---- Get all Questions ----
 const getQuestions = catchAsync(async (req, res) => {
     const data = await ExamQAGeneratorServices.getQuestions();
-
     sendResponse(res, {
         statusCode: HttpStatus.OK,
         success: true,
@@ -28,11 +27,11 @@ const getQuestions = catchAsync(async (req, res) => {
 
 // ---- Generate Random Questions ----
 const generateQuestions = catchAsync(async (req, res) => {
-    const { type, difficulty, count } = req.query;
+    const { questionType, difficulty, numberOfQuestions } = req.body as QuizSettings;
     const data = await ExamQAGeneratorServices.generateQuestions({
-        type: type as string,
-        difficulty: difficulty as string,
-        count: count ? Number(count) : 5,
+        questionType,
+        difficulty,
+        numberOfQuestions,
     });
     sendResponse(res, {
         statusCode: HttpStatus.OK,
@@ -41,6 +40,7 @@ const generateQuestions = catchAsync(async (req, res) => {
         data,
     });
 });
+
 
 export const ExamQAGeneratorController = {
     createQuestion,

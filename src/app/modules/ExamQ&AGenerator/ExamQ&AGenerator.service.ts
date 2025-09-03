@@ -1,3 +1,4 @@
+import AppError from "../../errorHelpers/AppError";
 import { IQuestion } from "./ExamQ&AGenerator.interface";
 import { Question } from "./ExamQ&AGenerator.model";
 
@@ -5,7 +6,7 @@ const createQuestion = async (payload: IQuestion) => {
     try {
         return await Question.create(payload);
     } catch (error) {
-        throw new Error("Failed to create question");
+        throw new AppError(500, "Failed to create question");
     }
 };
 
@@ -15,7 +16,10 @@ const getQuestions = async () => {
         const data = await Question.find().sort({ updatedAt: -1 });
         const totalQuestions = data.length;
 
-        // Optional metadata (like StudyPlanner did)
+        if (totalQuestions === 0) {
+            throw new AppError(404, "No questions found");
+        }
+
         return {
             metadata: {
                 totalQuestions,
@@ -26,41 +30,63 @@ const getQuestions = async () => {
             data,
         };
     } catch (error) {
-        throw new Error("Failed to fetch questions");
+        throw new AppError(500, "Failed to fetch questions");
     }
 };
 
 // ---- Generate Random Questions ----
+type Difficulty = "easy" | "medium" | "hard";
+type QuestionType = "mcq" | "short" | "truefalse";
+
+export interface QuizSettings {
+    difficulty: Difficulty;
+    questionType: QuestionType;
+    numberOfQuestions: number;
+}
+
 const generateQuestions = async ({
-    type,
     difficulty,
-    count,
-}: {
-    type?: string;
-    difficulty?: string;
-    count: number;
-}) => {
+    questionType,
+    numberOfQuestions,
+}: QuizSettings) => {
     try {
-        const match: any = {};
-        if (type) match.type = type;
-        if (difficulty) match.difficulty = difficulty;
+        const match: any = {
+            difficulty,
+            type: questionType,
+        };
+
+        // মোট কত প্রশ্ন আছে দেখে নাও
+        const totalAvailable = await Question.countDocuments(match);
+
+        if (totalAvailable === 0) {
+            throw new AppError(
+                404,
+                `No questions found for type: ${questionType}, difficulty: ${difficulty}`
+            );
+        }
+
+        // যেটুকু পাওয়া যাবে সেই অনুযায়ী নাও (min ব্যবহার করে)
+        const limit = Math.min(numberOfQuestions, totalAvailable);
 
         const data = await Question.aggregate([
             { $match: match },
-            { $sample: { size: count } },
+            { $sample: { size: limit } },
         ]);
 
         return {
             metadata: {
                 totalGenerated: data.length,
-                filter: { type, difficulty, count },
+                requested: numberOfQuestions,
+                available: totalAvailable,
+                filter: { difficulty, questionType, numberOfQuestions },
             },
             data,
         };
     } catch (error) {
-        throw new Error("Failed to generate questions");
+        throw new AppError(500, "Failed to generate questions");
     }
 };
+
 
 export const ExamQAGeneratorServices = {
     createQuestion,
