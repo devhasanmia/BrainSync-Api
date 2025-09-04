@@ -21,7 +21,7 @@ const studySessionSchema = new Schema<IStudySession>(
       type: String,
       enum: ["focus", "break"],
       required: true,
-    },
+    }
   },
   {
     timestamps: true,
