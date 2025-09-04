@@ -10,16 +10,20 @@ import { IAuthUser } from "../../interfaces/auth.interface";
 import { IStudySession } from "./studyAssistant.interface";
 import { StudySession } from "./studyAssistant.model";
 
+// --- Helper: convert minutes to "Xh Ym" ---
+const formatMinutesToHour = (minutes: number) => {
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  return `${h}h ${m}m`;
+};
+
 // ---- Create Study Session ----
 const createStudySession = async (
   payload: Omit<IStudySession, "userId">,
   authUser: IAuthUser
 ) => {
   try {
-    const sessionData = {
-      ...payload,
-      userId: authUser._id,
-    };
+    const sessionData = { ...payload, userId: authUser._id };
     return await StudySession.create(sessionData);
   } catch (error) {
     throw new Error("Failed to create study session");
@@ -32,16 +36,20 @@ const getStudySessions = async (authUser: IAuthUser) => {
     const data = await StudySession.find({ userId: authUser._id }).sort({
       createdAt: -1,
     });
+
     const totalSessions = data.length;
-    // --- মোট Focus / Break ---
+
+    // --- Total Focus / Break ---
     const totalFocusTime = data
       .filter((s) => s.type === "focus")
       .reduce((acc, cur) => acc + cur.duration, 0);
     const totalBreakTime = data
       .filter((s) => s.type === "break")
       .reduce((acc, cur) => acc + cur.duration, 0);
-    // --- আজকের সময় ---
+
     const today = new Date();
+
+    // --- Today Focus Time ---
     const todayFocusTime = data
       .filter(
         (s) =>
@@ -50,7 +58,8 @@ const getStudySessions = async (authUser: IAuthUser) => {
           s.createdAt <= endOfDay(today)
       )
       .reduce((acc, cur) => acc + cur.duration, 0);
-    // --- এই সপ্তাহের সময় ---
+
+    // --- Week Focus Time ---
     const weekFocusTime = data
       .filter(
         (s) =>
@@ -59,7 +68,8 @@ const getStudySessions = async (authUser: IAuthUser) => {
           s.createdAt <= endOfWeek(today, { weekStartsOn: 1 })
       )
       .reduce((acc, cur) => acc + cur.duration, 0);
-    // --- এই মাসের সময় ---
+
+    // --- Month Focus Time ---
     const monthFocusTime = data
       .filter(
         (s) =>
@@ -68,6 +78,7 @@ const getStudySessions = async (authUser: IAuthUser) => {
           s.createdAt <= endOfMonth(today)
       )
       .reduce((acc, cur) => acc + cur.duration, 0);
+
     return {
       metadata: {
         totalSessions,
@@ -76,6 +87,13 @@ const getStudySessions = async (authUser: IAuthUser) => {
         todayFocusTime,
         weekFocusTime,
         monthFocusTime,
+
+        // --- Formatted for display ---
+        totalFocusTimeFormatted: formatMinutesToHour(totalFocusTime),
+        totalBreakTimeFormatted: formatMinutesToHour(totalBreakTime),
+        todayFocusTimeFormatted: formatMinutesToHour(todayFocusTime),
+        weekFocusTimeFormatted: formatMinutesToHour(weekFocusTime),
+        monthFocusTimeFormatted: formatMinutesToHour(monthFocusTime),
       },
       data,
     };
